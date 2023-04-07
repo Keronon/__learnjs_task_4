@@ -10,13 +10,13 @@ import { MsgData } from './structs.core';
 const exchangeName  = `profiles - users`;
 const exchangeKeys  = { CMDs: `cmd`, DATA: `data` };
 const exchangeTypes = { ByKEY: undefined, ByBindKEY: 'direct', ToALL: 'fanout', HEADERS: 'headers', ByFILTER: 'topic' };
+const queueOptions  : amqp.Options.AssertQueue = { expires   : 5000 };
 
 export class Rabbit
 {
     private channel  : amqp.Channel;
     private queueCMDs: amqp.Replies.AssertQueue;
     private queueDATA: amqp.Replies.AssertQueue;
-    private readonly options: amqp.Options.AssertQueue = { expires: 5000 };
 
     // initializing of rabbit service objects
     async Prepare()
@@ -28,7 +28,7 @@ export class Rabbit
         await this.channel.assertExchange( exchangeName, exchangeTypes.ByKEY );
 
         // creating commands queue
-        this.queueCMDs = await this.channel.assertQueue( `CMDs`, this.options );
+        this.queueCMDs = await this.channel.assertQueue( `CMDs`, queueOptions );
         await this.channel.bindQueue( this.queueCMDs.queue, exchangeName, exchangeKeys.CMDs );
     }
 
@@ -45,7 +45,7 @@ export class Rabbit
         log(`  - > Rabbit : consume`);
 
         // creating data queue
-        this.queueDATA = await this.channel.assertQueue( `DATA`, this.options );
+        this.queueDATA = await this.channel.assertQueue( `DATA`, queueOptions );
         await this.channel.bindQueue( this.queueDATA.queue, exchangeName, exchangeKeys.DATA );
 
         let msg: amqp.GetMessage | boolean;
