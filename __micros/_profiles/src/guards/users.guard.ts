@@ -5,11 +5,10 @@ const log = console.log;
 import { CanActivate, ExecutionContext, ForbiddenException, HttpException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 
 // other objects
-import { Observable } from "rxjs";
-import { Reflector  } from "@nestjs/core";
+import { Reflector } from "@nestjs/core";
 
 // structs
-import { User } from "../structs.core";
+import { Profile, User } from "../structs.core";
 
 // services
 import { AppService } from "src/module/profiles.service";
@@ -27,7 +26,7 @@ export class UsersGuard implements CanActivate
     // guard by users data
     async canActivate (context: ExecutionContext)
     {
-        log(`  = > G-Users : can activate`);
+        log(`  = > P > G-Users : can activate`);
 
         try
         {
@@ -45,9 +44,10 @@ export class UsersGuard implements CanActivate
             {
                 // check authorization
                 const user: User = await this.Verify( req.headers.authorization );
+                const prof_auth : Profile = await this.profilesService.GetProfileByUId( user.u_id );
+                const prof_param: Profile = await this.profilesService.GetProfileByUId( req.params[`id`] );
 
-                const u_id = req.params[`u_id`];
-                if ( u_id && user.u_id === +u_id ) return true;
+                if ( prof_auth && prof_param && prof_auth.p_id === prof_param.p_id ) return true;
             }
 
             // get roles-decor
@@ -71,7 +71,7 @@ export class UsersGuard implements CanActivate
 
     async Verify(authHeader)
     {
-        log(`  = > G-Users : verify`);
+        log(`  = > P > G-Users : verify`);
 
         const [ bearer, token ] = authHeader.split(' ');
 
@@ -79,10 +79,10 @@ export class UsersGuard implements CanActivate
         {
             throw new UnauthorizedException( { message: `Unathorized user` } );
         }
-        console.log(authHeader);
         this.profilesService.rabbit.Publish( { cmd: `Verify`, data: authHeader } );
-        const res = await this.profilesService.rabbit.Get( 'data' );
-        if ( (res.name as string).includes( `Exception` ) )
+        const res = await this.profilesService.rabbit.Get( `Verify` );
+
+        if ( res.name && (res.name as string).includes( `Exception` ) )
             throw res;
 
         return res;

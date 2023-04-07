@@ -24,7 +24,7 @@ export class UsersGuard implements CanActivate
     // guard by users data
     canActivate (context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean>
     {
-        log(`  = > G-Users : can activate`);
+        log(`  = > U > G-Users : can activate`);
 
         try
         {
@@ -43,7 +43,7 @@ export class UsersGuard implements CanActivate
                 // check authorization
                 const user = this.usersService.Verify( req.headers.authorization );
 
-                const u_id = req.params[`u_id`];
+                const u_id = req.params[`id`];
                 if ( u_id && user.u_id === +u_id ) return true;
             }
 

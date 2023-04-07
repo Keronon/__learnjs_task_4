@@ -35,15 +35,19 @@ export class AppService
 
                 try
                 {
-                    const deal: Promise<any> = this[ data.cmd ]( data.data );
-                    deal.then( (res) =>
+                    const deal: Promise<any> | any = this[ data.cmd ]( data.data );
+                    const back = (res) =>
                     {
                         this.rabbit.Publish( { cmd: data.cmd, data: res } );
                         this.rabbit.channel.ack( msg );
-                    } );
+                    };
+
+                    if ( deal instanceof Promise ) deal.then( back );
+                    else back( deal );
                 }
                 catch (ex)
                 {
+                    log(ex);
                     this.rabbit.Publish( { cmd: data.cmd, data: ex } );
                     this.rabbit.channel.ack( msg );
                 }
@@ -89,7 +93,7 @@ export class AppService
     {
         log(`  - > S-Users : get token`);
 
-        const payload: Token = user;
+        const payload: Token = { u_id: user.u_id, u_email: user.u_email, u_role: user.u_role };
         return { token: this.jwtService.sign( payload ) }
     }
 
@@ -149,7 +153,7 @@ export class AppService
     // check user authentification
     Verify(authHeader): User
     {
-        log(`  = > G-Users : verify`);
+        log(`  = > S-Users : verify`);
 
         const [ bearer, token ] = authHeader.split(' ');
 
@@ -157,7 +161,7 @@ export class AppService
         {
             throw new UnauthorizedException( { message: `Unathorized user` } );
         }
-        log(authHeader);
+
         return this.jwtService.verify( token );
     }
 }
