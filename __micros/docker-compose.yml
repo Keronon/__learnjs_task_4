@@ -1,0 +1,68 @@
+
+version: '0.1'
+
+services:
+
+  users_service:
+    build: ./_users
+    env_file:
+      - ./_users/.env
+    volumes:
+      - ./_users:/users_root
+    ports:
+      - 12121:5555
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+        - rabbitmq_net
+
+  profiles_service:
+    build: ./_profiles
+    env_file:
+      - ./_profiles/.env
+    volumes:
+      - ./_profiles:/profiles_root
+    ports:
+      - 12122:5555
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+        - rabbitmq_net
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+    volumes:
+      - ./postgres:/postgresql/db
+
+  pgadmin:
+    container_name: pgadmin
+    depends_on:
+      - postgres
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: no@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 123
+    expose:
+      - '80'
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 12123:15672 # appending real port to RMQ web-UI
+    volumes:
+        - ~/rabbitmq/durables/:/var/lib/rabbitmq/
+        - ~/rabbitmq/logs/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_net
+
+networks:
+  rabbitmq_net:
+    driver: bridge

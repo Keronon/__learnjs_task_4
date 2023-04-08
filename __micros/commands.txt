@@ -1,2 +1,45 @@
+
+; Console :
+
 d:\Programs\RabbitMQ\rabbitmq_server-3.11.13\sbin>
-    rabbitmq-plugins enable rabbitmq_management
+    rabbitmq-plugins enable rabbitmq_management   - активация RabbitMQ сервиса
+
+; VSCode :
+
+./
+    docker build [-t <name[:<tag>]>] .            - создание образа
+    docker images \ docker image ls               - просмотр образов
+    docker image inspect <name[:<tag>]>           - просмотр образов
+
+    docker run                                    - создание и запуск контейнера на основании образа
+        [-d]                                           = запуск в фоне
+        [-p <local port>:<container port>]             = связывание реального и внутреннего портов
+        [-v <volume name>:<volume path like in file>]  = подключение volume-папки
+        [-v <volume real path>]                        = подключение папки на устройстве, которая будет использоваться вместо соответствующей контейнерной
+        [-e PORT=12121]                                = ручная установка переменных окружения
+        [--env-file <path>]                            = внутренний путь к файлу окружения
+        [--name <name>]                                = именование контейнера
+        [--rm]                                         = удаление при остановке
+        <image id \ image name[:<tag>]>                = имя образа для построения
+> > docker run -d -p 80:12121 -v logs:/root/logs -v "d:/projects/docker_test:/root" -v /root/node_modules --rm --name logsapp logsapp:volumes
+
+    docker rmi <image id[, image id...]>          - удаление образа
+    docker image prune                            - удаление всех неиспользуемых образов
+    docker tag <old name> <new name>              - создание дубликата образа с новым именем
+
+    docker ps -a                                  - просмотр всех контейнеров
+    docker start <container id>                   - запуск контейнера
+    docker stop <container id>                    - остановка контейнера
+    docker rm <container id[, container id...]>   - удаление контейнера
+    docker container prune                        - удаление всех незапущенных контейнеров
+    docker attach <container id>                  - переход внутрь процесса запущенного контейнера
+    docker logs <container id>                    - делает разывый вывод, равный выполненным выводам текущего запущенного контейнера
+
+    docker login                                  - подключение к docker-hub
+    docker push <<login>/<image name[:<tag>]>>    - залитие образа в hub
+
+    docker-compose build                          - строит образ на основании инструкций compose-файла
+    docker-compose up                             - запускает контейнер из образа
+    docker-compose up --build -d                  - быстрая сборка и запуск
+    docker-compose exec <container name> sh       - переход к управлению контейнером
+    docker-compose log                            - получение всех выводов на данный момент, связанных с compose-сборкой

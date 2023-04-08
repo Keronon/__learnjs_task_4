@@ -10,7 +10,7 @@ import { MsgData } from './structs.core';
 const exchangeName  = `profiles - users`;
 const exchangeKeys  = { CMDs: `cmd`, DATA: `data` };
 const exchangeTypes = { ByKEY: undefined, ByBindKEY: 'direct', ToALL: 'fanout', HEADERS: 'headers', ByFILTER: 'topic' };
-const queueOptions  : amqp.Options.AssertQueue = { expires   : 5000 };
+const queueOptions  : amqp.Options.AssertQueue = { expires : 5000 };
 
 export class Rabbit
 {
