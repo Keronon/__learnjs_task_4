@@ -6,6 +6,7 @@ import { colours } from './console.colors';
 
 // structs
 import { MsgData } from './structs.core';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 const exchangeName  = `profiles - users`;
 const exchangeKeys  = { CMDs: `cmd`, DATA: `data` };
@@ -36,6 +37,8 @@ export class Rabbit
     {
         log(`  - > Rabbit : publish`);
 
+        if ( !this.channel ) throw new HttpException( `No connection to rabbit channel`, HttpStatus.CONFLICT );
+
         this.channel.publish( exchangeName, exchangeKeys.CMDs,
             Buffer.from( JSON.stringify( data ) ) );
     }
@@ -43,6 +46,8 @@ export class Rabbit
     async Get( cmd: string )
     {
         log(`  - > Rabbit : consume`);
+
+        if ( !this.channel ) throw new HttpException( `No connection to rabbit channel`, HttpStatus.CONFLICT );
 
         // creating data queue
         this.queueDATA = await this.channel.assertQueue( `DATA`, queueOptions );

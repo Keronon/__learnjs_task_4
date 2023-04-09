@@ -5,8 +5,8 @@ const log = console.log;
 import * as bcrypt from 'bcryptjs';
 
 // other elements
-import { DB, QUERYes } from 'src/db.core';
-import { Rabbit      } from 'src/rabbit.core';
+import { DB, QUERYes } from '../db.core';
+import { Rabbit      } from '../rabbit.core';
 
 // NestJS elements
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
@@ -60,7 +60,7 @@ export class AppService
 
         // get authorization token
         this.rabbit.Publish( { cmd: `GetToken`, data: user } );
-        let token: Token = await this.rabbit.Get( `GetToken` );
+        let token: { token: string } = await this.rabbit.Get( `GetToken` );
         return token;
     }
 

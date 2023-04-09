@@ -6,7 +6,7 @@ import { colours    } from '../console.colors';
 import { Registrate } from '../structs.core';
 
 // NestJS elements
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 
 // services
 import { AppService } from './profiles.service';
@@ -37,7 +37,7 @@ export class AppController
     @UseGuards( UsersGuard )
     @Self()
     @Roles('admin')
-    @Post(`/:id/del`)
+    @Delete(`/:id/del`)
     Delete ( @Param(`id`) p_id: number )
     {
         log(`  = > C-Profiles : delete`);
@@ -45,8 +45,9 @@ export class AppController
         return this.service.DeleteAccount( p_id );
     }
 
-    // REQ get account by id
+    // REQ get profile by id
     @UseGuards( UsersGuard )
+    @Self()
     @Roles('admin')
     @Get(`/:id`)
     GetById ( @Param(`id`) p_id: number )
@@ -54,5 +55,17 @@ export class AppController
         log(`  = > C-Profiles : get by id`);
 
         return this.service.GetProfileById( p_id );
+    }
+
+    // REQ get profile by uid
+    @UseGuards( UsersGuard )
+    @Self()
+    @Roles('admin')
+    @Get()
+    GetByUId ( @Query( `u_id` ) u_id: number )
+    {
+        log(`  = > C-Profiles : get by uid`);
+
+        return this.service.GetProfileByUId( u_id );
     }
 }

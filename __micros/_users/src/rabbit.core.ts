@@ -6,6 +6,7 @@ import { colours } from './console.colors';
 
 // structs
 import { MsgData } from './structs.core';
+import { ConflictException } from '@nestjs/common';
 
 const exchangeName  = `profiles - users`;
 const exchangeKeys  = { CMDs: `cmd`, DATA: `data` };
@@ -25,6 +26,8 @@ export class Rabbit
 
         // connecting to rabbit
         this.channel = await ( await amqp.connect(`amqp://localhost`) ).createChannel();
+        if ( !this.channel )
+            throw new ConflictException( `Can not connet to the rabbit channel` );
         await this.channel.assertExchange( exchangeName, exchangeTypes.ByKEY );
 
         // creating commands queue

@@ -2,10 +2,10 @@
 const log = ( text: any ) => console.log( `${colours.fg.yellow}${text}${colours.reset}` );
 
 // NestJS - elements
-import { Body, Controller, Post, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, UseGuards, Headers } from '@nestjs/common';
 
 // other elemenrts
-import { colours } from 'src/console.colors';
+import { colours } from '../console.colors';
 
 // structs
 import { User } from '../structs.core';
@@ -14,8 +14,8 @@ import { User } from '../structs.core';
 import { AppService } from './users.service';
 
 // decors
-import { UsersGuard } from 'src/guards/users.guard';
-import { Roles } from 'src/decorators/role.decorator';
+import { UsersGuard } from '../guards/users.guard';
+import { Roles } from '../decorators/role.decorator';
 
 // this controller >>
 
@@ -26,7 +26,7 @@ export class AppController
     constructor ( private service: AppService ) { }
 
     // REQ login
-    @Post(`/login`)
+    @Get(`/login`)
     Login ( @Body() data: User )
     {
         log(`  = > C-Users : login`);
@@ -43,6 +43,16 @@ export class AppController
         log(`  = > C-Users : get all`);
 
         return this.service.GetUsers();
+    }
+
+    // REQ get current user
+    @UseGuards( UsersGuard )
+    @Get(`/cur`)
+    GetCurrent ( @Headers (`Authorization`) authHeader )
+    {
+        log(`  = > C-Users : get current`);
+
+        return this.service.GetUserCurrent( authHeader );
     }
 
     // REQ get user by id

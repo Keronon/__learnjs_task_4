@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 import { Reflector  } from "@nestjs/core";
 
 // services
-import { AppService } from "src/module/users.service";
+import { AppService } from "../module/users.service";
 
 // decors keys
 import { ROLES_DECOR } from "../decorators/role.decorator";

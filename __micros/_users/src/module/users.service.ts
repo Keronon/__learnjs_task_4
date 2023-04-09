@@ -5,8 +5,8 @@ const log = console.log;
 import * as bcrypt from 'bcryptjs';
 
 // own other elements
-import { DB, QUERYes } from 'src/db.core';
-import { Rabbit      } from 'src/rabbit.core';
+import { DB, QUERYes } from '../db.core';
+import { Rabbit      } from '../rabbit.core';
 
 // NestJS elements
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -114,6 +114,15 @@ export class AppService
 
         await DB.query( QUERYes.DELETE( `users`, `u_id = ${u_id}` ) );
         return true;
+    }
+
+    // get current user
+    async GetUserCurrent (authHeader)
+    {
+        log(`  - > S-Users : get current user`);
+
+        const row: User = this.Verify(authHeader);
+        return row;
     }
 
     // get all users

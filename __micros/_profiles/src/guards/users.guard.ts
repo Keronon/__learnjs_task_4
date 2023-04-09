@@ -11,7 +11,7 @@ import { Reflector } from "@nestjs/core";
 import { Profile, User } from "../structs.core";
 
 // services
-import { AppService } from "src/module/profiles.service";
+import { AppService } from "../module/profiles.service";
 
 // decors keys
 import { ROLES_DECOR } from "../decorators/role.decorator";
@@ -45,7 +45,7 @@ export class UsersGuard implements CanActivate
                 // check authorization
                 const user: User = await this.Verify( req.headers.authorization );
                 const prof_auth : Profile = await this.profilesService.GetProfileByUId( user.u_id );
-                const prof_param: Profile = await this.profilesService.GetProfileByUId( req.params[`id`] );
+                const prof_param: Profile = await this.profilesService.GetProfileByUId( req.params[`id`] ?? req.query[`u_id`] );
 
                 if ( prof_auth && prof_param && prof_auth.p_id === prof_param.p_id ) return true;
             }

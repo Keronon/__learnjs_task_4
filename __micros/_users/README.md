@@ -13,6 +13,15 @@ npm i
 - @types/amqplib  - ↑ types
 ```
 
+npm i -D
+```
+jest              - testing code
+ts-jest           - ↑ TypeScript addition
+@types/jest       - ↑ types
+supertest         - testing web-requests
+@types/supertest  - ↑ types
+```
+
 npm i -g
 ```
 - npm             - package manager
