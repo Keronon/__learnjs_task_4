@@ -1,11 +1,11 @@
 
-const log = ( text: any ) => console.log( `${colours.fg.yellow}${text}${colours.reset}` );
+const log = ( data: any ) => console.log( colors.fg.yellow, ` = > C-Users :`, data, colors.reset );
 
 // NestJS - elements
-import { Body, Controller, Post, Get, Param, UseGuards, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Param, UseGuards, Headers } from '@nestjs/common';
 
 // other elemenrts
-import { colours } from '../console.colors';
+import { colors } from '../console.colors';
 
 // structs
 import { User } from '../structs.core';
@@ -29,7 +29,7 @@ export class AppController
     @Get(`/login`)
     Login ( @Body() data: User )
     {
-        log(`  = > C-Users : login`);
+        log(`login`);
 
         return this.service.Login( data );
     }
@@ -40,7 +40,7 @@ export class AppController
     @Get()
     GetAll ()
     {
-        log(`  = > C-Users : get all`);
+        log(`get all`);
 
         return this.service.GetUsers();
     }
@@ -50,7 +50,7 @@ export class AppController
     @Get(`/cur`)
     GetCurrent ( @Headers (`Authorization`) authHeader )
     {
-        log(`  = > C-Users : get current`);
+        log(`get current`);
 
         return this.service.GetUserCurrent( authHeader );
     }
@@ -61,7 +61,7 @@ export class AppController
     @Get(`/:id`)
     GetById ( @Param(`id`) u_id: number )
     {
-        log(`  = > C-Users : get by id`);
+        log(`get by id`);
 
         return this.service.GetUserById( u_id );
     }

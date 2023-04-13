@@ -1,8 +1,8 @@
 
-// console.log(colours.bg.blue, colours.fg.white, "I am a white message with a blue background", colours.reset) ; 
+// console.log(colours.bg.blue, colours.fg.white, "I am a white message with a blue background", colours.reset) ;
 // Make sure that you don't forget "colours.reset" at the so that you can reset the console back to it's original colours.
 
-export const colours = {
+export const colors = {
     reset     : "\x1b[0m",
     bright    : "\x1b[1m",
     dim       : "\x1b[2m",

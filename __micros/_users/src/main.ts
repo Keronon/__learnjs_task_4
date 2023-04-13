@@ -1,5 +1,5 @@
 
-const log = ( line: string ) => console.log( `\n = > ${line}\n` );
+const log = ( data: string ) => console.log( `\n = > ${data}\n` );
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule   } from './module/users.module';

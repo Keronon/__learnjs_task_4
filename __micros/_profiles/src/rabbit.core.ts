@@ -1,8 +1,8 @@
 
-const log = ( text: any ) => console.log(  `${colours.fg.blue}${text}${colours.reset}` );
+const log = ( data: any ) => console.log( colors.fg.blue, ` - > R-Profiles :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
-import { colours } from './console.colors';
+import { colors } from './console.colors';
 
 // structs
 import { MsgData } from './structs.core';
@@ -22,10 +22,10 @@ export class Rabbit
     // initializing of rabbit service objects
     async Prepare()
     {
-        log(`  - > Rabbit : prepare`);
+        log(`prepare`);
 
         // connecting to rabbit
-        this.channel = await ( await amqp.connect(`amqp://localhost`) ).createChannel();
+        this.channel = await ( await amqp.connect( process.env.AMQP_URL ) ).createChannel();
         await this.channel.assertExchange( exchangeName, exchangeTypes.ByKEY );
 
         // creating commands queue
@@ -35,7 +35,7 @@ export class Rabbit
 
     Publish( data: MsgData )
     {
-        log(`  - > Rabbit : publish`);
+        log(`publish`);
 
         if ( !this.channel ) throw new HttpException( `No connection to rabbit channel`, HttpStatus.CONFLICT );
 
@@ -45,7 +45,7 @@ export class Rabbit
 
     async Get( cmd: string )
     {
-        log(`  - > Rabbit : consume`);
+        log(`consume`);
 
         if ( !this.channel ) throw new HttpException( `No connection to rabbit channel`, HttpStatus.CONFLICT );
 

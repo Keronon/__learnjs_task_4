@@ -92,7 +92,7 @@ export class AppService
     // get profile by user id
     async GetProfileByUId ( u_id: number )
     {
-        log(`  - > S-Profiles : get profile by id`);
+        log(`  - > S-Profiles : get profile by uid`);
 
         let profile: Profile = (await DB.query( QUERYes.SELECT( `profiles`, `p_id_user = ${u_id}` ) )).rows[0];
         return profile;

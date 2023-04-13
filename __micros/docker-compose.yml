@@ -1,68 +1,78 @@
 
 version: '0.1'
 
+networks:
+  local_net:
+    driver: bridge
+
 services:
-
-  users:
-    build: ./_users
-    env_file:
-      - ./_users/.env
-    volumes:
-      - ./_users:/users_root
-    ports:
-      - 12121:12121
-    depends_on:
-      - pg
-      - rabbitmq
-    networks:
-        - rabbitmq_net
-
-  profiles:
-    build: ./_profiles
-    env_file:
-      - ./_profiles/.env
-    volumes:
-      - ./_profiles:/profiles_root
-    ports:
-      - 12122:12122
-    depends_on:
-      - pg
-      - rabbitmq
-    networks:
-        - rabbitmq_net
 
   pg:
     image: postgres
+    container_name: pg
     restart: always
+    ports:
+      - 5430:5432
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
     volumes:
-      - ./postgres:/postgresql/db
+      - ./postgres:/var/lib/postgresql/data
+    networks:
+      - local_net
 
   pgadmin:
-    container_name: pgadmin
-    depends_on:
-      - pg
     image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: no@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: 123
+    container_name: pgadmin
+    restart: always
     expose:
       - '80'
-    restart: always
+    depends_on:
+      - pg
+    networks:
+      - local_net
 
   rabbitmq:
-    image: rabbitmq
-    container_name: 'rabbitmq'
+    image: rabbitmq:management-alpine
+    container_name: rabbitmq
+    restart: always
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
     volumes:
-        - ~/rabbitmq/durables/:/var/lib/rabbitmq/
-        - ~/rabbitmq/logs/:/var/log/rabbitmq
+      - ./rabbitmq/durables/:/var/lib/rabbitmq/
+      - ./rabbitmq/logs/:/var/log/rabbitmq
     networks:
-        - rabbitmq_net
+      - local_net
 
-networks:
-  rabbitmq_net:
-    driver: bridge
+  users:
+    build: ./_users
+    container_name: users
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    env_file:
+      - ./_users/.env
+    ports:
+      - 12121:12121
+    volumes:
+      - ./_users:/users_root
+    networks:
+      - local_net
+
+  profiles:
+    build: ./_profiles
+    container_name: profiles
+    restart: on-failure
+    depends_on:
+      - pg
+      - rabbitmq
+    env_file:
+      - ./_profiles/.env
+    ports:
+      - 12122:12122
+    volumes:
+      - ./_profiles:/profiles_root
+    networks:
+      - local_net

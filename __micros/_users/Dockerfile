@@ -24,4 +24,4 @@ EXPOSE $PORT
 # VOLUME [ "/root/data" ]
 
 # commands to each container run
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start" ]

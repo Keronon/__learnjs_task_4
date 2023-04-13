@@ -1,8 +1,8 @@
 
-const log = ( text: any ) => console.log(  `${colours.fg.yellow}${text}${colours.reset}` );
+const log = ( data: any ) => console.log( colors.fg.yellow, ` = > C-Profiles :`, data, colors.reset );
 
 // other elements
-import { colours    } from '../console.colors';
+import { colors    } from '../console.colors';
 import { Registrate } from '../structs.core';
 
 // NestJS elements
@@ -28,7 +28,7 @@ export class AppController
     @Post(`/reg`)
     Registrate ( @Body() data: Registrate )
     {
-        log(`  = > C-Profiles : registrate`);
+        log(`registrate`);
 
         return this.service.RegistrateAccount( data );
     }
@@ -40,7 +40,7 @@ export class AppController
     @Delete(`/:id/del`)
     Delete ( @Param(`id`) p_id: number )
     {
-        log(`  = > C-Profiles : delete`);
+        log(`delete`);
 
         return this.service.DeleteAccount( p_id );
     }
@@ -52,7 +52,7 @@ export class AppController
     @Get(`/:id`)
     GetById ( @Param(`id`) p_id: number )
     {
-        log(`  = > C-Profiles : get by id`);
+        log(`get by id`);
 
         return this.service.GetProfileById( p_id );
     }
@@ -64,7 +64,7 @@ export class AppController
     @Get()
     GetByUId ( @Query( `u_id` ) u_id: number )
     {
-        log(`  = > C-Profiles : get by uid`);
+        log(`get by uid`);
 
         return this.service.GetProfileByUId( u_id );
     }

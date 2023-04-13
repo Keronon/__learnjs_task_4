@@ -1,8 +1,8 @@
 
-const log = ( text: any ) => console.log(  `${colours.fg.blue}${text}${colours.reset}` );
+const log = ( data: any ) => console.log( colors.fg.blue, ` - > R-Users :`, data, colors.reset );
 
 import * as amqp from 'amqplib';
-import { colours } from './console.colors';
+import { colors } from './console.colors';
 
 // structs
 import { MsgData } from './structs.core';
@@ -22,10 +22,14 @@ export class Rabbit
     // initializing of rabbit service objects
     async Prepare()
     {
-        log(`  - > Rabbit : prepare`);
+        log(`prepare`);
 
         // connecting to rabbit
-        this.channel = await ( await amqp.connect(`amqp://localhost`) ).createChannel();
+        let connection;
+        try {
+            connection = await amqp.connect( process.env.AMQP_URL );
+        } catch (ex) { log( (new Date()).toTimeString() ); throw ex; }
+        this.channel = await connection.createChannel();
         if ( !this.channel )
             throw new ConflictException( `Can not connet to the rabbit channel` );
         await this.channel.assertExchange( exchangeName, exchangeTypes.ByKEY );
@@ -37,7 +41,7 @@ export class Rabbit
 
     async Publish( data: MsgData )
     {
-        log(`  - > Rabbit : publish`);
+        log(`publish`);
 
         // creating data queue
         this.queueDATA = await this.channel.assertQueue( `DATA`, queueOptions );
