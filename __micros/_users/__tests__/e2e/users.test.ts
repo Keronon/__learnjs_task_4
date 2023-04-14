@@ -3,7 +3,6 @@ import * as req             from "supertest";
 import { Test             } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule        } from '../../src/module/users.module';
-import { User             } from "src/structs.core";
 
 describe ( `/users`, () =>
 {
@@ -21,51 +20,77 @@ describe ( `/users`, () =>
 
     afterAll( async () => { await app.close(); } );
 
-    it( `/login -> token of user | correct token`, async () =>
+    it( `/login -> token of user | correct token`, () =>
     {
-        const res1 = await req( app.getHttpServer() )
-            .post( `/users/login` )
-            .send( { email: 'email 1', password: 'password 1' } )
-            .expect( 200 );
+        return req( app.getHttpServer() )
+            .get( `/users/login` )
+            .send( { u_email: 'email 1', u_password: 'password 1' } )
+            .expect( (res: req.Response) =>
+            {
+                admin_token = res.body.token;
 
-        admin_token = res1.body.token;
-        expect( admin_token )
-            .toBe( "string" );
+                expect( typeof admin_token )
+                    .toBe( "string" );
+            } )
+            .expect( 200 );
     } );
 
-    it( `-> All users`, async () =>
+    it( `. -> All users`, () =>
     {
-        const res1 = await req( app.getHttpServer() )
+        return req( app.getHttpServer() )
             .get( `/users` )
             .set('Authorization', `Bearer ${admin_token}`)
-            .expect( 200 );
+            .expect( (res: req.Response) =>
+            {
+                expect( res.body instanceof Array )
+                    .toBe( true );
 
-        const users = res1.body;
-        expect( users )
-            .toBe( `Array` );
+                expect( res.body.length )
+                    .toEqual( 2 );
+            } )
+            .expect( 200 );
     } );
 
-    it( `/users/cur -> User`, async () =>
+    it( `/users/cur -> User`, () =>
     {
-        const res1 = await req( app.getHttpServer() )
+        return req( app.getHttpServer() )
             .get( `/users/cur` )
             .set('Authorization', `Bearer ${admin_token}`)
+            .expect( (res: req.Response) =>
+            {
+                admin = res.body;
+                expect( isToken( admin ) )
+                    .toBe( true );
+            } )
             .expect( 200 );
-
-        admin = res1.body;
-        expect( admin )
-            .toBe( `User` );
     } );
 
-    it( `/users/:id -> User`, async () =>
+    it( `/users/:id -> User`, () =>
     {
-        const res1 = await req( app.getHttpServer() )
-            .delete( `/users/${admin.u_id}` )
+        return req( app.getHttpServer() )
+            .get( `/users/${admin.u_id}` )
             .set('Authorization', `Bearer ${admin_token}`)
+            .expect( (res: req.Response) =>
+            {
+                expect( isUser( res.body ) )
+                    .toBe( true );
+            } )
             .expect( 200 );
-
-        admin = res1.body;
-        expect( admin )
-            .toBe( 'User' );
     } );
 } );
+
+function isToken( obj: any )
+{
+    return `u_id`       in obj &&
+           `u_email`    in obj &&
+           `u_role`     in obj ;
+}
+
+function isUser( obj: any )
+{
+    return `u_id`       in obj &&
+           `u_email`    in obj &&
+           `u_role`     in obj &&
+           `u_login`    in obj &&
+           `u_password` in obj ;
+}

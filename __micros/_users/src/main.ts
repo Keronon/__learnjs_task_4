@@ -4,7 +4,7 @@ const log = ( data: string ) => console.log( `\n = > ${data}\n` );
 import { NestFactory } from '@nestjs/core';
 import { AppModule   } from './module/users.module';
 
-export default async function start ()
+async function start ()
 {
     const PORT = process.env.PORT || 12121;
     const APP  = await NestFactory.create( AppModule );

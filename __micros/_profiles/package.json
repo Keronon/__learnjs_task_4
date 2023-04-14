@@ -11,7 +11,8 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
-    "test": "jest --runInBand --forceExit --detectOpenHandles --silent=false"
+    "test": "jest --runInBand --forceExit --detectOpenHandles --silent=true",
+    "test:dev": "jest --runInBand --forceExit --detectOpenHandles --silent=false"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
